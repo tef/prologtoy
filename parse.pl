@@ -14,6 +14,7 @@ eval([cond],_) :- !, fail.
 eval([cond,[H,A]|_],Z) :- eval(H,O), \+ O = [],!, eval(A,Z).
 eval([cond,_|T],Z) :- eval([cond|T],Z),!.
 
+
 eval([F|A],X) :- eval_list(A,Ae), apply(F,Ae,X),!.
 
 eval_list([],[]).
@@ -34,7 +35,7 @@ apply(pow,[X,Y],Z) :- Z is X ** Y.
 apply(eq,[X,Y],t) :- X = Y.
 apply(eq,[X,Y],[]) :- \+ X = Y.
 
-apply(atom,[X],t) :- atom(X); X = [].
+apply(atom,[X],t) :- number(X);atom(X); X = [].
 apply(atom,[[_|_]],[]).
 
 apply(cons,[X|[Y]],[X|Y]).
@@ -42,11 +43,11 @@ apply(car,[[X|_]],X).
 apply(cdr,[[_|T]],T).
 
 apply([lambda,[],E],[],O) :- eval(E,O).
-apply([lambda,[A|Ta],E],[L|Tl],O) :- subst(A,L,E,E2), apply([lambda,Ta,E2],Tl,O).
+apply([lambda,[A|Ta],E],[L|Tl],O) :- subst(A,[quote,L],E,E2), apply([lambda,Ta,E2],Tl,O).
 
 subst(_,_,[],[]).
 subst(A,B,[A|T],[B|L]) :- subst(A,B,T,L).
-subst(A,B,[H|T],[H|L]) :- subst(A,B,T,L).
+subst(A,B,[H|T],[H2|L]) :- subst(A,B,H,H2),subst(A,B,T,L).
 subst(A,B,A,B).
 subst(_,_,X,X).
 
