@@ -1,4 +1,7 @@
-) :- defined(X,A), eval(A,O).
+% swi prolog
+:- dynamic defined/2.
+
+eval(X,O) :- defined(X,A), eval(A,O).
 eval([X|T],O) :- defined(X,A), eval([A|T],O).
 
 eval(X,X) :- number(X); X = t ; X = [].
@@ -48,10 +51,6 @@ subst(A,B,[H|T],[H2|L]) :- subst(A,B,H,H2),subst(A,B,T,L).
 subst(A,B,A,B).
 subst(_,_,X,X).
 
-% gprolog
-:- predicate_property(defined,dynamic).
-% swi prolog
-:- dynamic defined/2.
 
 defined(_,[]) :- !,fail.
 
